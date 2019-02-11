@@ -29,84 +29,66 @@ namespace Traveling
 
             //List<List<Point>> allLists = Perm(pointList);
 
-            //List<List<int>> Permutations = Perms(4);
+            //List<int> lst = new List<int> { 1, 2, 3 };
+            //List<List<int>> Permutations = Perms(lst);
+            String str = "123";
+            int n = str.Length;
+            PrintList(Permute(str, 0, n - 1));
 
         }
-
-        static List<List<Point>> Perm(List<Point> pointList)
+        public static List<string> Permute(String str, int l, int r)
         {
+            List<string> lst = new List<string> { };
 
-
-            if (pointList.Count == 1)
+            if (l == r)
             {
-                Console.WriteLine("Returning " + pointList[0].x);
-                List<List<Point>> ret = new List<List<Point>> { };
-                ret.Add(pointList);
-                return ret;
+                lst.Add(str);
             }
 
-            List<List<Point>> all = new List<List<Point>> { };
-
-            for (int i = 0; i < pointList.Count; i++)
+            else
             {
-                Console.WriteLine("Starting All:");
-                for (int k = 0; k < all.Count; k++)
+                for (int i = l; i <= r; i++)
                 {
-                    PrintList(all[k]);
+                    str = Swap(str, l, i);
+                    lst.AddRange(Permute(str, l + 1, r));
+                    str = Swap(str, l, i);
                 }
-
-                Point headPoint = pointList[i];
-
-                pointList.RemoveAt(i);
-
-                Console.Write("\nHead Point: " + headPoint.x + "\tRemaining List: ");
-                PrintList(pointList);
-
-                List<List<Point>> subListList = new List<List<Point>> { };
-                subListList.AddRange(Perm(pointList));
-
-                Console.WriteLine("Current pre All:");
-                for (int k = 0; k < all.Count; k++)
-                {
-                    PrintList(all[k]);
-                }
-
-                for (int j = 0; j < subListList.Count; j++)
-                {
-                    subListList[j].Insert(0, headPoint);
-                }
-                Console.WriteLine("Sublistlist: ");
-                for (int k = 0; k < subListList.Count; k++)
-                {
-                    PrintList(subListList[k]);
-                }
-
-                Console.WriteLine("Current All:");
-                for (int k = 0; k < all.Count; k++)
-                {
-                    PrintList(all[k]);
-                }
-
-                all.AddRange(subListList);
-                Console.WriteLine("All List: ");
-                for (int k = 0; k < all.Count; k++)
-                {
-                    PrintList(all[k]);
-                }
-
-                //Console.WriteLine("subListList length: " + subListList.Count);
             }
 
-
-
-            return all;
+            return lst;
         }
 
-        static void PrintList(List<Point> lst)
+        /** 
+        * Swap Characters at position 
+        * @param a string value 
+        * @param i position 1 
+        * @param j position 2 
+        * @return swapped string 
+        */
+        public static String Swap(String a, int i, int j)
+        {
+            char temp;
+            char[] charArray = a.ToCharArray();
+            temp = charArray[i];
+            charArray[i] = charArray[j];
+            charArray[j] = temp;
+            string s = new string(charArray);
+            return s;
+        }
+
+        static void PrintListList(List<List<string>> lstlst)
+        {
+            for (int i = 0; i < lstlst.Count; i++)
+            {
+                PrintList(lstlst[i]);
+            }
+        }
+
+        static void PrintList(List<string> lst)
         {
             for (int i = 0; i < lst.Count; i++)
             {
-                Console.Write(lst[i].x + ",");
+                Console.Write(lst[i] + ",");
             }
             Console.WriteLine();
         }
