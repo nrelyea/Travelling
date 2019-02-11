@@ -16,7 +16,7 @@ namespace Traveling
             Point p3 = new Point(3, 3);
             //Point p4 = new Point(0, 10);
 
-            List<Point> pointList = new List<Point> { p1, p2 };
+            List<Point> pointList = new List<Point> { p1, p2, p3 };
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
@@ -26,17 +26,34 @@ namespace Traveling
 
         static void BruteForce(List<Point> pointList)
         {
+            // --- Create int list of all possible permutations of indexes of points ---
 
-            //List<List<Point>> allLists = Perm(pointList);
-
-            //List<int> lst = new List<int> { 1, 2, 3 };
-            //List<List<int>> Permutations = Perms(lst);
-            String str = "123";
+            String str = "";
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                str += i.ToString();
+            }
             int n = str.Length;
-            PrintList(Permute(str, 0, n - 1));
+            PrintStringList(StringPermute(str, 0, n - 1));
+            List<string> strList = StringPermute(str, 0, n - 1);
+
+            List<List<int>> intListList = new List<List<int>> { };
+
+            for (int i = 0; i < strList.Count; i++)
+            {
+                List<int> intList = strList[i].Select(x => Convert.ToInt32(x.ToString())).ToList();
+                intListList.Add(intList);
+            }
+
+            PrintIntListList(intListList);
+
+
+
+            // --- Begin analyzing paths ---
+
 
         }
-        public static List<string> Permute(String str, int l, int r)
+        public static List<string> StringPermute(String str, int l, int r)
         {
             List<string> lst = new List<string> { };
 
@@ -50,7 +67,7 @@ namespace Traveling
                 for (int i = l; i <= r; i++)
                 {
                     str = Swap(str, l, i);
-                    lst.AddRange(Permute(str, l + 1, r));
+                    lst.AddRange(StringPermute(str, l + 1, r));
                     str = Swap(str, l, i);
                 }
             }
@@ -58,13 +75,6 @@ namespace Traveling
             return lst;
         }
 
-        /** 
-        * Swap Characters at position 
-        * @param a string value 
-        * @param i position 1 
-        * @param j position 2 
-        * @return swapped string 
-        */
         public static String Swap(String a, int i, int j)
         {
             char temp;
@@ -76,15 +86,30 @@ namespace Traveling
             return s;
         }
 
-        static void PrintListList(List<List<string>> lstlst)
+        static void PrintIntListList(List<List<int>> lstlst)
         {
             for (int i = 0; i < lstlst.Count; i++)
             {
-                PrintList(lstlst[i]);
+                PrintIntList(lstlst[i]);
+            }
+        }
+        static void PrintStringListList(List<List<string>> lstlst)
+        {
+            for (int i = 0; i < lstlst.Count; i++)
+            {
+                PrintStringList(lstlst[i]);
             }
         }
 
-        static void PrintList(List<string> lst)
+        static void PrintIntList(List<int> lst)
+        {
+            for (int i = 0; i < lst.Count; i++)
+            {
+                Console.Write(lst[i] + ",");
+            }
+            Console.WriteLine();
+        }
+        static void PrintStringList(List<string> lst)
         {
             for (int i = 0; i < lst.Count; i++)
             {
