@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Traveling
 {
@@ -12,22 +13,33 @@ namespace Traveling
         {
 
             Point p0 = new Point(0, 0);
-            Point p1 = new Point(10, 10);
-            Point p2 = new Point(10, 0);
-            Point p3 = new Point(0, 10);
-            Point p4 = new Point(20, 20);
-            Point p5 = new Point(5, 5);
-            Point p6 = new Point(20, 0);
+            Point p1 = new Point(200, 400);
+            Point p2 = new Point(500, 302);
+            Point p3 = new Point(601, 203);
+            Point p4 = new Point(217, 12);
+            Point p5 = new Point(59, 91);
+            Point p6 = new Point(150, 300);
 
             List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6 };
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
-            BruteForce(pointList);
+            List<int> minIndexList = BruteForce(pointList);
+
+
+
+
+
+            List<List<int>> intListList = BuildIntListList(pointList, minIndexList);
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Travelling.Form1(intListList));
+
 
         }
 
-        static void BruteForce(List<Point> pointList)
+        static List<int> BruteForce(List<Point> pointList)
         {
             // --- Create int list of all possible permutations of indexes of points ---
 
@@ -74,11 +86,27 @@ namespace Traveling
                 }
             }
 
-            Console.Write("\nSmallest path possible: " + minDistance + "\nUsing path: ");
+            Console.Write("\nSmallest path possible: " + Math.Round(minDistance, 2) + "\nUsing path: ");
             PrintPath(minIndexList);
 
-
+            return minIndexList;
         }
+
+        public static List<List<int>> BuildIntListList(List<Point> pointList, List<int> indexList)
+        {
+            List<List<int>> intListList = new List<List<int>> { };
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                List<int> intList = new List<int> { 0, 0 };
+                intList[0] = pointList[indexList[i]].x;
+                intList[1] = pointList[indexList[i]].y;
+                intList[2] = indexList[i];
+                intListList.Add(intList);
+            }
+            return intListList;
+        }
+
         public static List<string> StringPermute(String str, int l, int r)
         {
             List<string> lst = new List<string> { };
@@ -118,7 +146,7 @@ namespace Traveling
             {
                 Console.Write("Point " + intList[i] + " => ");
             }
-            Console.WriteLine();
+            Console.WriteLine("Point " + intList[0]);
         }
 
         static void PrintIntListList(List<List<int>> lstlst)
