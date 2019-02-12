@@ -11,12 +11,15 @@ namespace Traveling
         static void Main(string[] args)
         {
 
-            Point p1 = new Point(1, 1);
-            Point p2 = new Point(2, 2);
-            Point p3 = new Point(3, 3);
-            //Point p4 = new Point(0, 10);
+            Point p0 = new Point(0, 0);
+            Point p1 = new Point(10, 10);
+            Point p2 = new Point(10, 0);
+            Point p3 = new Point(0, 10);
+            Point p4 = new Point(20, 20);
+            Point p5 = new Point(5, 5);
+            Point p6 = new Point(20, 0);
 
-            List<Point> pointList = new List<Point> { p1, p2, p3 };
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6 };
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
@@ -34,7 +37,7 @@ namespace Traveling
                 str += i.ToString();
             }
             int n = str.Length;
-            PrintStringList(StringPermute(str, 0, n - 1));
+
             List<string> strList = StringPermute(str, 0, n - 1);
 
             List<List<int>> intListList = new List<List<int>> { };
@@ -45,11 +48,34 @@ namespace Traveling
                 intListList.Add(intList);
             }
 
-            PrintIntListList(intListList);
+            //PrintIntListList(intListList);
 
 
 
             // --- Begin analyzing paths ---
+
+            double minDistance = 10000;
+            List<int> minIndexList = new List<int> { };
+
+            for (int i = 0; i < intListList.Count; i++)
+            {
+                List<Point> newOrder = new List<Point> { };
+                for (int j = 0; j < pointList.Count; j++)
+                {
+                    newOrder.Add(pointList[intListList[i][j]]);
+                }
+
+                if (minDistance > PathLength(newOrder))
+                {
+                    minDistance = PathLength(newOrder);
+                    minIndexList.Clear();
+                    minIndexList.AddRange(intListList[i]);
+
+                }
+            }
+
+            Console.Write("\nSmallest path possible: " + minDistance + "\nUsing path: ");
+            PrintPath(minIndexList);
 
 
         }
@@ -86,6 +112,15 @@ namespace Traveling
             return s;
         }
 
+        static void PrintPath(List<int> intList)
+        {
+            for (int i = 0; i < intList.Count; i++)
+            {
+                Console.Write("Point " + intList[i] + " => ");
+            }
+            Console.WriteLine();
+        }
+
         static void PrintIntListList(List<List<int>> lstlst)
         {
             for (int i = 0; i < lstlst.Count; i++)
@@ -93,23 +128,8 @@ namespace Traveling
                 PrintIntList(lstlst[i]);
             }
         }
-        static void PrintStringListList(List<List<string>> lstlst)
-        {
-            for (int i = 0; i < lstlst.Count; i++)
-            {
-                PrintStringList(lstlst[i]);
-            }
-        }
 
         static void PrintIntList(List<int> lst)
-        {
-            for (int i = 0; i < lst.Count; i++)
-            {
-                Console.Write(lst[i] + ",");
-            }
-            Console.WriteLine();
-        }
-        static void PrintStringList(List<string> lst)
         {
             for (int i = 0; i < lst.Count; i++)
             {
