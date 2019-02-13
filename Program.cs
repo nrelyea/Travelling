@@ -19,8 +19,11 @@ namespace Traveling
             Point p4 = new Point(217, 12);
             Point p5 = new Point(59, 91);
             Point p6 = new Point(150, 300);
+            Point p7 = new Point(300, 300);
+            Point p8 = new Point(350, 150);
+            Point p9 = new Point(400, 150);
 
-            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6 };
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 };
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
@@ -62,12 +65,15 @@ namespace Traveling
 
             //PrintIntListList(intListList);
 
-
+            Console.WriteLine("Permutation List Complete");
 
             // --- Begin analyzing paths ---
 
-            double minDistance = 10000;
+            double minDistance = 1000000;
+            double maxDistance = 0;
+
             List<int> minIndexList = new List<int> { };
+            List<int> maxIndexList = new List<int> { };
 
             for (int i = 0; i < intListList.Count; i++)
             {
@@ -77,17 +83,27 @@ namespace Traveling
                     newOrder.Add(pointList[intListList[i][j]]);
                 }
 
-                if (minDistance > PathLength(newOrder))
+                double path = PathLength(newOrder);
+
+                if (minDistance > path)
                 {
-                    minDistance = PathLength(newOrder);
+                    minDistance = path;
                     minIndexList.Clear();
                     minIndexList.AddRange(intListList[i]);
 
+                }
+                else if (maxDistance < path)
+                {
+                    maxDistance = path;
+                    maxIndexList.Clear();
+                    maxIndexList.AddRange(intListList[i]);
                 }
             }
 
             Console.Write("\nSmallest path possible: " + Math.Round(minDistance, 2) + "\nUsing path: ");
             PrintPath(minIndexList);
+            Console.Write("\nLongest path possible: " + Math.Round(maxDistance, 2) + "\nUsing path: ");
+            PrintPath(maxIndexList);
 
             return minIndexList;
         }
@@ -98,7 +114,7 @@ namespace Traveling
 
             for (int i = 0; i < pointList.Count; i++)
             {
-                List<int> intList = new List<int> { 0, 0 };
+                List<int> intList = new List<int> { 0, 0, 0 };
                 intList[0] = pointList[indexList[i]].x;
                 intList[1] = pointList[indexList[i]].y;
                 intList[2] = indexList[i];

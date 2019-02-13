@@ -30,9 +30,9 @@ namespace Travelling
 
         public void Form1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
-            
+
             drawPath(e, pointsList);
- 
+
         }
 
         private void tnrAppTimer_Tick(object sender, EventArgs e)
@@ -45,33 +45,33 @@ namespace Travelling
             TextFormatFlags flags = TextFormatFlags.Bottom | TextFormatFlags.EndEllipsis;
 
             int pointSize = 10;
-             
-            for(int i=0; i < pointsList.Count; i++)
+
+            for (int i = 0; i < pointsList.Count; i++)
             {
                 Rectangle pt = new Rectangle(pointsList[i][0], pointsList[i][1], pointSize, pointSize);
-                System.Drawing.SolidBrush redBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);               
+                System.Drawing.SolidBrush redBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
                 e.Graphics.FillEllipse(redBrush, pt);
                 e.Graphics.DrawEllipse(Pens.Black, pt);
 
-                //TextRenderer.DrawText(e.Graphics, "This is some text that will be clipped at the end.", this.Font,
-                //new Rectangle(10, 10, 100, 50), SystemColors.ControlText, flags);
-
                 if (i > 0)
                 {
-                    Point previous = new Point(pointsList[i - 1][0]+(pointSize/2), pointsList[i - 1][1]+(pointSize/2));
+                    Point previous = new Point(pointsList[i - 1][0] + (pointSize / 2), pointsList[i - 1][1] + (pointSize / 2));
                     Point current = new Point(pointsList[i][0] + (pointSize / 2), pointsList[i][1] + (pointSize / 2));
                     e.Graphics.DrawLine(Pens.Black, previous, current);
                 }
+
+                TextRenderer.DrawText(e.Graphics, "p" + pointsList[i][2], this.Font,
+                new Rectangle(pointsList[i][0] + pointSize, pointsList[i][1] + (pointSize / 2), 20, 20), SystemColors.ControlText, flags);
             }
 
-            Point last = new Point(pointsList[pointsList.Count-1][0] + (pointSize / 2), pointsList[pointsList.Count - 1][1] + (pointSize / 2));
+            Point last = new Point(pointsList[pointsList.Count - 1][0] + (pointSize / 2), pointsList[pointsList.Count - 1][1] + (pointSize / 2));
             Point first = new Point(pointsList[0][0] + (pointSize / 2), pointsList[0][1] + (pointSize / 2));
             e.Graphics.DrawLine(Pens.Black, last, first);
 
-            
-            
+
+
 
         }
-     
+
     }
 }
