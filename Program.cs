@@ -13,27 +13,24 @@ namespace Traveling
         {
 
             Point p0 = new Point(0, 0);
-            Point p1 = new Point(200, 400);
-            Point p2 = new Point(500, 302);
-            Point p3 = new Point(601, 203);
-            Point p4 = new Point(217, 12);
-            Point p5 = new Point(59, 91);
-            Point p6 = new Point(150, 300);
-            Point p7 = new Point(300, 300);
-            Point p8 = new Point(350, 150);
-            Point p9 = new Point(400, 150);
+            Point p1 = new Point(0, 100);
+            Point p2 = new Point(100, 100);
+            Point p3 = new Point(100, 200);
+            Point p4 = new Point(200, 200);
+            Point p5 = new Point(200, 300);
+            Point p6 = new Point(300, 300);
+            Point p7 = new Point(300, 400);
+            //Point p8 = new Point(350, 150);
+            //Point p9 = new Point(400, 150);
 
-            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 };
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7 };
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
-            List<int> minIndexList = BruteForce(pointList);
+            //List<int> minIndexList = BruteForce(pointList);
+            List<int> closestPointIndexList = ClosestPointNext(pointList);
 
-
-
-
-
-            List<List<int>> intListList = BuildIntListList(pointList, minIndexList);
+            List<List<int>> intListList = BuildIntListList(pointList, closestPointIndexList);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -106,6 +103,44 @@ namespace Traveling
             PrintPath(maxIndexList);
 
             return minIndexList;
+        }
+
+        static List<int> ClosestPointNext(List<Point> pointList)
+        {
+            List<int> intList = new List<int> { };
+
+            List<Point> newPointList = new List<Point> { };
+
+            newPointList.Add(pointList[0]);
+            intList.Add(0);
+
+            for (int i = 0; i < pointList.Count - 1; i++)
+            {
+                double min = 10000;
+                int minIndex = i + 1;
+                Point minPoint = new Point(0, 0);
+
+                for (int j = 0; j < pointList.Count; j++)
+                {
+                    if (Distance(newPointList[i], pointList[j]) < min && !(intList.Contains(j)))
+                    {
+                        min = Distance(newPointList[i], pointList[j]);
+                        minIndex = j;
+                        minPoint.x = pointList[j].x;
+                        minPoint.y = pointList[j].y;
+                    }
+                }
+                Console.WriteLine("Point " + intList[i] + " is closest to Point " + minIndex);
+                intList.Add(minIndex);
+                newPointList.Add(minPoint);
+
+            }
+
+            Console.Write("\nPath Formed: ");
+            PrintPath(intList);
+            Console.WriteLine("Path Distance: " + Math.Round(PathLength(newPointList), 2));
+
+            return intList;
         }
 
         public static List<List<int>> BuildIntListList(List<Point> pointList, List<int> indexList)
