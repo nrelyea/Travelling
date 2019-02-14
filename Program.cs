@@ -12,31 +12,48 @@ namespace Traveling
         static void Main(string[] args)
         {
 
-            Point p0 = new Point(0, 0);
-            Point p1 = new Point(0, 100);
-            Point p2 = new Point(100, 100);
-            Point p3 = new Point(100, 200);
-            Point p4 = new Point(200, 200);
-            Point p5 = new Point(200, 300);
-            Point p6 = new Point(300, 300);
-            Point p7 = new Point(300, 400);
+            Point p0 = new Point(100, 100);
+            Point p1 = new Point(400, 400);
+            Point p2 = new Point(150, 200);
+            Point p3 = new Point(350, 200);
+            //Point p4 = new Point(200, 200);
+            //Point p5 = new Point(200, 300);
+            //Point p6 = new Point(300, 300);
+            //Point p7 = new Point(300, 400);
             //Point p8 = new Point(350, 150);
             //Point p9 = new Point(400, 150);
 
-            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7 };
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3 };
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
-            //List<int> minIndexList = BruteForce(pointList);
-            List<int> closestPointIndexList = ClosestPointNext(pointList);
+            List<int> indexList = OriginalOrder(pointList);
+            //List<int> indexList = BruteForce(pointList);
+            //List<int> indexList = ClosestPointNext(pointList);
 
-            List<List<int>> intListList = BuildIntListList(pointList, closestPointIndexList);
+            Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
+
+            List<List<int>> intListList = BuildIntListList(pointList, indexList);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Travelling.Form1(intListList));
 
 
+
+
+        }
+
+        static List<int> OriginalOrder(List<Point> pointList)
+        {
+            List<int> intList = new List<int> { };
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                intList.Add(i);
+            }
+
+            return intList;
         }
 
         static List<int> BruteForce(List<Point> pointList)
@@ -143,8 +160,35 @@ namespace Traveling
             return intList;
         }
 
+
+
         static bool AreIntersecting(Point start1, Point end1, Point start2, Point end2)
         {
+            if (Math.Max(start1.x, end1.x) < Math.Min(start2.x, end2.x))
+            {
+                return false;
+            }
+
+            double A1 = ((double)start1.y - (double)end1.y) / ((double)start1.x - (double)end1.x);
+            double A2 = ((double)start2.y - (double)end2.y) / ((double)start2.x - (double)end2.x);
+
+            if (A1 == A2)
+            {
+                return false;
+            }
+
+            double b1 = (double)start1.y - (A1 * (double)start1.x);
+            double b2 = (double)start2.y - (A2 * (double)start2.x);
+
+            double Xa = (b2 - b1) / (A1 - A2);
+
+            double iMax = Math.Max(Math.Min(start1.x, end1.x), Math.Min(start2.x, end2.x));
+            double iMin = Math.Min(Math.Max(start1.x, end1.x), Math.Max(start2.x, end2.x));
+            if (Xa < iMax || Xa > iMin)
+            {
+                return false;
+            }
+
             return true;
         }
 
