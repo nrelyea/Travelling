@@ -143,6 +143,11 @@ namespace Traveling
             return intList;
         }
 
+        static bool AreIntersecting(Point start1, Point end1, Point start2, Point end2)
+        {
+            return true;
+        }
+
         public static List<List<int>> BuildIntListList(List<Point> pointList, List<int> indexList)
         {
             List<List<int>> intListList = new List<List<int>> { };
