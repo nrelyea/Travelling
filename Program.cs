@@ -30,8 +30,7 @@ namespace Traveling
             List<int> indexList = OriginalOrder(pointList);
             //List<int> indexList = BruteForce(pointList);
             //List<int> indexList = ClosestPointNext(pointList);
-
-            Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
+            //Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
 
             List<List<int>> intListList = BuildIntListList(pointList, indexList);
 
@@ -42,6 +41,18 @@ namespace Traveling
 
 
 
+        }
+
+        static List<int> SwapEdges(List<Point> pointList)
+        {
+            List<int> intList = new List<int> { };
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                intList.Add(i);
+            }
+
+            return intList;
         }
 
         static List<int> OriginalOrder(List<Point> pointList)
@@ -264,6 +275,19 @@ namespace Traveling
                 Console.Write(lst[i] + ",");
             }
             Console.WriteLine();
+        }
+
+        static List<Point> SwapPoints(List<Point> pointList, int index1, int index2)
+        {
+            Point tempPoint = new Point(pointList[index1].x, pointList[index1].y);
+
+            pointList[index1].x = pointList[index2].x;
+            pointList[index1].y = pointList[index2].y;
+
+            pointList[index2].x = tempPoint.x;
+            pointList[index2].y = tempPoint.y;
+
+            return pointList;
         }
 
         static double PathLength(List<Point> pointList)
