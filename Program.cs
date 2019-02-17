@@ -33,6 +33,7 @@ namespace Traveling
             //List<int> indexList = BruteForce(pointList);
             //List<int> indexList = ClosestPointNext(pointList);
             //List<int> indexList = SmallestFromSwaps(pointList);
+            //List<int> indexList = SmallestFromIntersectionCount(pointList);
             //Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
 
             List<List<int>> intListList = BuildIntListList(pointList, indexList);
@@ -44,6 +45,64 @@ namespace Traveling
 
 
 
+        }
+        static List<int> SmallestFromIntersectionCount(List<Point> pointList)
+        {
+            List<int> intList = OriginalOrder(pointList);
+
+            bool complete = false;
+
+            int minIntersections = IntersectionCount(pointList);
+
+            int swapCount = 0;
+
+            while (minIntersections > 0)
+            {
+                complete = true;
+
+                for (int i = 0; i < pointList.Count; i++)
+                {
+                    for (int j = 0; j < pointList.Count; j++)
+                    {
+                        if (i != j)
+                        {
+
+                            pointList = SwapPoints(pointList, i, j);
+
+                            int temp = intList[i];
+                            intList[i] = intList[j];
+                            intList[j] = temp;
+
+                            int newIntersectionCount = IntersectionCount(pointList);
+
+                            if (newIntersectionCount < minIntersections)
+                            {
+                                complete = false;
+
+                                minIntersections = newIntersectionCount;
+
+                                swapCount++;
+
+                                break;
+                            }
+                            else
+                            {
+                                pointList = SwapPoints(pointList, i, j);
+                                temp = intList[i];
+                                intList[i] = intList[j];
+                                intList[j] = temp;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("\nFinal Assessment:");
+            PrintPointList(pointList);
+            Console.WriteLine("Path Length: " + PathLength(pointList));
+            Console.WriteLine("\nSwaps made: " + swapCount);
+
+            return intList;
         }
 
         static List<int> SmallestFromSwaps(List<Point> pointList)
