@@ -12,25 +12,27 @@ namespace Traveling
         static void Main(string[] args)
         {
 
-            Point p0 = new Point(100, 100);
+            Point p0 = new Point(150, 100);
             Point p1 = new Point(401, 401);
-            Point p2 = new Point(152, 202);
+            Point p2 = new Point(152, 302);
             Point p3 = new Point(353, 203);
-            Point p4 = new Point(200, 200);
+            Point p4 = new Point(250, 300);
             Point p5 = new Point(200, 300);
             Point p6 = new Point(300, 300);
             Point p7 = new Point(300, 400);
             Point p8 = new Point(350, 150);
             Point p9 = new Point(400, 150);
 
-            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 };
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4 };
 
-            //Console.WriteLine("\nSmallest??? = " + PathLength(new List<Point> { p1, p2, p0, p3 }));
+            Console.WriteLine("Intersections: " + IntersectionCount(pointList));
 
-            //List<int> indexList = OriginalOrder(pointList);
+
+
+            List<int> indexList = OriginalOrder(pointList);
             //List<int> indexList = BruteForce(pointList);
             //List<int> indexList = ClosestPointNext(pointList);
-            List<int> indexList = SmallestFromSwaps(pointList);
+            //List<int> indexList = SmallestFromSwaps(pointList);
             //Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
 
             List<List<int>> intListList = BuildIntListList(pointList, indexList);
@@ -219,7 +221,35 @@ namespace Traveling
             return intList;
         }
 
+        static int IntersectionCount(List<Point> pointList)
+        {
+            int count = 0;
 
+            List<int> intList = OriginalOrder(pointList);
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                for (int j = i + 2; j < pointList.Count - 1; j++)
+                {
+                    if (AreIntersecting(pointList[i], pointList[i + 1], pointList[j], pointList[j + 1]))
+                    {
+                        Console.WriteLine("p" + intList[i] + " --- p" + intList[i + 1] + " intersects p" + intList[j] + " --- p" + intList[j + 1]);
+                        count++;
+                    }
+                }
+            }
+
+            for (int i = 1; i < pointList.Count - 2; i++)
+            {
+                if (AreIntersecting(pointList[pointList.Count - 1], pointList[0], pointList[i], pointList[i + 1]))
+                {
+                    Console.WriteLine("p" + intList[pointList.Count - 1] + " --- p" + intList[0] + " intersects p" + intList[i] + " --- p" + intList[i + 1]);
+                    count++;
+                }
+            }
+
+            return count;
+        }
 
         static bool AreIntersecting(Point start1, Point end1, Point start2, Point end2)
         {
