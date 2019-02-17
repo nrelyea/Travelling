@@ -13,9 +13,9 @@ namespace Traveling
         {
 
             Point p0 = new Point(100, 100);
-            Point p1 = new Point(400, 400);
-            Point p2 = new Point(150, 200);
-            Point p3 = new Point(350, 200);
+            Point p1 = new Point(401, 401);
+            Point p2 = new Point(152, 202);
+            Point p3 = new Point(353, 203);
             //Point p4 = new Point(200, 200);
             //Point p5 = new Point(200, 300);
             //Point p6 = new Point(300, 300);
@@ -25,11 +25,14 @@ namespace Traveling
 
             List<Point> pointList = new List<Point> { p0, p1, p2, p3 };
 
+
+
             Console.WriteLine("Path length: " + PathLength(pointList));
 
-            List<int> indexList = OriginalOrder(pointList);
+            //List<int> indexList = OriginalOrder(pointList);
             //List<int> indexList = BruteForce(pointList);
             //List<int> indexList = ClosestPointNext(pointList);
+            List<int> indexList = SmallestFromSwaps(pointList);
             //Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
 
             List<List<int>> intListList = BuildIntListList(pointList, indexList);
@@ -43,14 +46,70 @@ namespace Traveling
 
         }
 
-        static List<int> SwapEdges(List<Point> pointList)
+        static List<int> SmallestFromSwaps(List<Point> pointList)
         {
-            List<int> intList = new List<int> { };
+            List<int> intList = OriginalOrder(pointList);
 
-            for (int i = 0; i < pointList.Count; i++)
+            bool complete = false;
+
+            double minPath = PathLength(pointList);
+
+            int whileLoopCount = 0;
+
+            while (!complete)
             {
-                intList.Add(i);
+                complete = true;
+
+                for (int i = 0; i < pointList.Count; i++)
+                {
+                    for (int j = 0; j < pointList.Count; j++)
+                    {
+                        if (i != j)
+                        {
+                            PrintPointList(pointList);
+
+                            pointList = SwapPoints(pointList, i, j);
+                            int temp = intList[i];
+                            intList[i] = intList[j];
+                            intList[j] = temp;
+
+                            PrintPointList(pointList);
+
+                            double newPathLength = PathLength(pointList);
+
+
+                            Console.WriteLine("Swapped points " + intList[i] + " and " + intList[j] + " to test path length " + newPathLength);
+
+                            if (newPathLength < minPath)
+                            {
+                                complete = false;
+
+                                minPath = newPathLength;
+
+                                Console.WriteLine("New path length: " + minPath);
+
+                                break;
+                            }
+                            else
+                            {
+                                pointList = SwapPoints(pointList, i, j);
+                                temp = intList[i];
+                                intList[i] = intList[j];
+                                intList[j] = temp;
+                            }
+                        }
+                    }
+                }
+
+                Console.WriteLine("\nFinal Assessment:");
+                PrintPointList(pointList);
+                PrintIntList(intList);
+                Console.WriteLine("Path Length: " + minPath);
+
+                whileLoopCount++;
             }
+
+            Console.WriteLine("While loop count: " + whileLoopCount);
 
             return intList;
         }
@@ -258,6 +317,15 @@ namespace Traveling
                 Console.Write("Point " + intList[i] + " => ");
             }
             Console.WriteLine("Point " + intList[0]);
+        }
+
+        static void PrintPointList(List<Point> pointList)
+        {
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                Console.Write(pointList[i].x + "," + pointList[i].y + "    ");
+            }
+            Console.WriteLine();
         }
 
         static void PrintIntListList(List<List<int>> lstlst)
