@@ -16,18 +16,16 @@ namespace Traveling
             Point p1 = new Point(401, 401);
             Point p2 = new Point(152, 202);
             Point p3 = new Point(353, 203);
-            //Point p4 = new Point(200, 200);
-            //Point p5 = new Point(200, 300);
-            //Point p6 = new Point(300, 300);
-            //Point p7 = new Point(300, 400);
-            //Point p8 = new Point(350, 150);
-            //Point p9 = new Point(400, 150);
+            Point p4 = new Point(200, 200);
+            Point p5 = new Point(200, 300);
+            Point p6 = new Point(300, 300);
+            Point p7 = new Point(300, 400);
+            Point p8 = new Point(350, 150);
+            Point p9 = new Point(400, 150);
 
-            List<Point> pointList = new List<Point> { p0, p1, p2, p3 };
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 };
 
-
-
-            Console.WriteLine("Path length: " + PathLength(pointList));
+            //Console.WriteLine("\nSmallest??? = " + PathLength(new List<Point> { p1, p2, p0, p3 }));
 
             //List<int> indexList = OriginalOrder(pointList);
             //List<int> indexList = BruteForce(pointList);
@@ -54,7 +52,7 @@ namespace Traveling
 
             double minPath = PathLength(pointList);
 
-            int whileLoopCount = 0;
+            int swapCount = 0;
 
             while (!complete)
             {
@@ -66,19 +64,14 @@ namespace Traveling
                     {
                         if (i != j)
                         {
-                            PrintPointList(pointList);
 
                             pointList = SwapPoints(pointList, i, j);
+
                             int temp = intList[i];
                             intList[i] = intList[j];
                             intList[j] = temp;
 
-                            PrintPointList(pointList);
-
                             double newPathLength = PathLength(pointList);
-
-
-                            Console.WriteLine("Swapped points " + intList[i] + " and " + intList[j] + " to test path length " + newPathLength);
 
                             if (newPathLength < minPath)
                             {
@@ -86,7 +79,7 @@ namespace Traveling
 
                                 minPath = newPathLength;
 
-                                Console.WriteLine("New path length: " + minPath);
+                                swapCount++;
 
                                 break;
                             }
@@ -100,16 +93,12 @@ namespace Traveling
                         }
                     }
                 }
-
-                Console.WriteLine("\nFinal Assessment:");
-                PrintPointList(pointList);
-                PrintIntList(intList);
-                Console.WriteLine("Path Length: " + minPath);
-
-                whileLoopCount++;
             }
 
-            Console.WriteLine("While loop count: " + whileLoopCount);
+            Console.WriteLine("\nFinal Assessment:");
+            PrintPointList(pointList);
+            Console.WriteLine("Path Length: " + minPath);
+            Console.WriteLine("\nSwaps made: " + swapCount);
 
             return intList;
         }
