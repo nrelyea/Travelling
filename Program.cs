@@ -235,6 +235,36 @@ namespace Traveling
 
 
 
+        static int IntersectionCount(List<Point> pointList)
+        {
+            int count = 0;
+
+            List<int> intList = OriginalOrder(pointList);
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                for (int j = i + 2; j < pointList.Count - 1; j++)
+                {
+                    if (AreIntersecting(pointList[i], pointList[i + 1], pointList[j], pointList[j + 1]))
+                    {
+                        Console.WriteLine("p" + intList[i] + " --- p" + intList[i + 1] + " intersects p" + intList[j] + " --- p" + intList[j + 1]);
+                        count++;
+                    }
+                }
+            }
+
+            for (int i = 1; i < pointList.Count - 2; i++)
+            {
+                if (AreIntersecting(pointList[pointList.Count - 1], pointList[0], pointList[i], pointList[i + 1]))
+                {
+                    Console.WriteLine("p" + intList[pointList.Count - 1] + " --- p" + intList[0] + " intersects p" + intList[i] + " --- p" + intList[i + 1]);
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
         static bool AreIntersecting(Point start1, Point end1, Point start2, Point end2)
         {
             if (Math.Max(start1.x, end1.x) < Math.Min(start2.x, end2.x))
