@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Traveling
 {
@@ -112,7 +115,9 @@ namespace Traveling
 
             Console.WriteLine("\nFinal Assessment:");
             PrintIntList(intList);
-            Console.WriteLine("Path Length: " + minPath);
+            Console.WriteLine("Path Length: " + Math.Round(minPath, 2));
+
+            EvaluateResult(minPath);
 
             return intList;
         }
@@ -152,12 +157,13 @@ namespace Traveling
 
             //PrintIntListList(intListList);
 
-            Console.WriteLine("Permutation List Complete");
+            Console.WriteLine("Permutation List Complete: " + strList.Count + " permutations formed");
 
             // --- Begin analyzing paths ---
 
             double minDistance = 1000000;
             double maxDistance = 0;
+            double sumDistance = 0;
 
             List<int> minIndexList = new List<int> { };
             List<int> maxIndexList = new List<int> { };
@@ -171,6 +177,7 @@ namespace Traveling
                 }
 
                 double path = PathLength(newOrder);
+                sumDistance += path;
 
                 if (minDistance > path)
                 {
@@ -191,6 +198,19 @@ namespace Traveling
             PrintPath(minIndexList);
             Console.Write("\nLongest path possible: " + Math.Round(maxDistance, 2) + "\nUsing path: ");
             PrintPath(maxIndexList);
+            Console.Write("\nAverage path length: " + Math.Round((sumDistance / strList.Count), 2));
+
+
+
+
+
+            JObject bruteForceLengths = new JObject(
+                new JProperty("min", minDistance),
+                new JProperty("max", maxDistance),
+                new JProperty("average", (sumDistance / strList.Count))
+            );
+
+            File.WriteAllText(@"c:../../brute_force_lengths.json", bruteForceLengths.ToString());
 
             return minIndexList;
         }
@@ -230,10 +250,35 @@ namespace Traveling
             PrintPath(intList);
             Console.WriteLine("Path Distance: " + Math.Round(PathLength(newPointList), 2));
 
+            EvaluateResult(PathLength(newPointList));
+
             return intList;
         }
 
 
+
+        static void EvaluateResult(double resultDistance)
+        {
+            JObject bruteForceLengths = JObject.Parse(File.ReadAllText(@"c:../../brute_force_lengths.json"));
+            double bruteForceMin = (double)(bruteForceLengths).GetValue("min");
+            double bruteForceMax = (double)(bruteForceLengths).GetValue("max");
+            double bruteForceAverage = (double)(bruteForceLengths).GetValue("average");
+
+            double averageDev = Math.Round((((bruteForceAverage - bruteForceMin) / (bruteForceMax - bruteForceMin)) * 100), 3);
+            double evalDevMax = Math.Round((((resultDistance - bruteForceMin) / (bruteForceMax - bruteForceMin)) * 100), 3);
+            double evalDevAvg = Math.Round((((resultDistance - bruteForceMin) / (bruteForceAverage - bruteForceMin)) * 100), 3);
+
+
+            Console.WriteLine("\n\n--- Comparison to Brute Force Results ---\n");
+            Console.WriteLine("Brute force min:     " + Math.Round(bruteForceMin, 2) + "\tDeviation from min->max: 0.000% \tDeviation from min->avg: 0.000%");
+            Console.WriteLine("EVALUATED DISTANCE:  " + Math.Round(resultDistance, 2) + "\tDeviation from min->max: " + evalDevMax + "% \tDeviation from min->avg: " + evalDevAvg + "%");
+            Console.WriteLine("Brute force average: " + Math.Round(bruteForceAverage, 2) + "\tDeviation from min->max: " + averageDev + "% \tDeviation from min->avg: 100%");
+            Console.WriteLine("Brute force max:     " + Math.Round(bruteForceMax, 2) + "\tDeviation from min->max: 100%");
+
+
+
+
+        }
 
         static int IntersectionCount(List<Point> pointList)
         {
