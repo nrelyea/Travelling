@@ -14,7 +14,7 @@ namespace Traveling
     {
         static void Main(string[] args)
         {
-
+            ///*
             Point p0 = new Point(100, 100);
             Point p1 = new Point(401, 401);
             Point p2 = new Point(152, 202);
@@ -27,16 +27,32 @@ namespace Traveling
             Point p9 = new Point(400, 150);
 
             List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 };
+            //*/
 
+            /*
+            Point p0 = new Point(100, 100);
+            Point p1 = new Point(100, 200);
+            Point p2 = new Point(200, 200);
+            Point p3 = new Point(200, 300);
+            Point p4 = new Point(300, 300);
+            Point p5 = new Point(300, 400);
+            Point p6 = new Point(400, 400);
+            Point p7 = new Point(400, 500);
+            Point p8 = new Point(500, 500);
+            Point p9 = new Point(500, 600);
 
+            List<Point> pointList = new List<Point> { p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 };
+            */
 
             Console.WriteLine("Path length: " + PathLength(pointList));
 
             //List<int> indexList = OriginalOrder(pointList);
             //List<int> indexList = BruteForce(pointList);
             //List<int> indexList = ClosestPointNext(pointList);
+            //List<int> indexList = SmallestFromIntersectionCount(pointList);
             //List<int> indexList = SmallestFromSwaps(pointList);
-            List<int> indexList = SmallestFromIntersectionCount(pointList);
+            List<int> indexList = SmallestFromDoubleSwaps(pointList);
+
 
             List<List<int>> intListList = BuildIntListList(pointList, indexList);
 
@@ -49,7 +65,7 @@ namespace Traveling
 
         }
 
-        static List<int> SmallestFromSwaps(List<Point> pointList)
+        static List<int> SmallestFromDoubleSwaps(List<Point> pointList)
         {
             List<int> intList = OriginalOrder(pointList);
 
@@ -73,6 +89,8 @@ namespace Traveling
             double minPath = PathLength(tempPointList);
 
             int whileLoopCount = 0;
+            int swapCount = 0;
+            int finalSwapCount = 0;
 
             while (!complete)
             {
@@ -86,6 +104,7 @@ namespace Traveling
                         {
                             SwapPoints(tempPointList, i, j);
                             SwapInts(intList, i, j);
+                            swapCount++;
 
                             double newPathLength = PathLength(tempPointList);
 
@@ -94,6 +113,127 @@ namespace Traveling
                                 complete = false;
 
                                 minPath = newPathLength;
+
+                                finalSwapCount++;
+
+                                break;
+                            }
+                            else
+                            {
+
+                                bool newMinPathFound = false;
+
+                                for (int k = 0; k < tempPointList.Count; k++)
+                                {
+                                    for (int l = 0; l < tempPointList.Count; l++)
+                                    {
+                                        if (k != l && !(k == i && l == j) && !(k == j && l == i))
+                                        {
+                                            SwapPoints(tempPointList, k, l);
+                                            SwapInts(intList, k, l);
+                                            swapCount++;
+
+                                            newPathLength = PathLength(tempPointList);
+
+                                            if (newPathLength < minPath)
+                                            {
+                                                complete = false;
+
+                                                newMinPathFound = true;
+
+                                                minPath = newPathLength;
+
+                                                finalSwapCount++;
+
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                SwapPoints(tempPointList, k, l);
+                                                SwapInts(intList, k, l);
+                                            }
+                                        }
+                                    }
+
+                                    if (newMinPathFound)
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                if (!newMinPathFound)
+                                {
+                                    SwapPoints(tempPointList, i, j);
+                                    SwapInts(intList, i, j);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+                whileLoopCount++;
+            }
+
+            Console.WriteLine("\nWhile loop count: " + whileLoopCount + "\nSwaps made: " + swapCount + "\nSwaps Finalized: " + finalSwapCount);
+
+            Console.WriteLine("\nFinal Assessment:");
+            PrintIntList(intList);
+            Console.WriteLine("Path Length: " + Math.Round(minPath, 2));
+
+            EvaluateResult(minPath);
+
+            return intList;
+        }
+
+        static List<int> SmallestFromSwaps(List<Point> pointList)
+        {
+            List<int> intList = OriginalOrder(pointList);
+
+            List<Point> tempPointList = new List<Point> { };
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                int x = pointList[i].x;
+                int y = pointList[i].y;
+                Point newPoint = new Point(0, 0);
+                newPoint.x = x;
+                newPoint.y = y;
+                tempPointList.Add(newPoint);
+            }
+
+            bool complete = false;
+
+            double minPath = PathLength(tempPointList);
+
+            int whileLoopCount = 0;
+            int swapCount = 0;
+            int finalSwapCount = 0;
+
+            while (!complete)
+            {
+                complete = true;
+
+                for (int i = 0; i < tempPointList.Count; i++)
+                {
+                    for (int j = 0; j < tempPointList.Count; j++)
+                    {
+                        if (i != j)
+                        {
+                            SwapPoints(tempPointList, i, j);
+                            SwapInts(intList, i, j);
+                            swapCount++;
+
+                            double newPathLength = PathLength(tempPointList);
+
+                            if (newPathLength < minPath)
+                            {
+                                complete = false;
+
+                                minPath = newPathLength;
+
+                                finalSwapCount++;
 
                                 break;
                             }
@@ -111,7 +251,7 @@ namespace Traveling
                 whileLoopCount++;
             }
 
-            Console.WriteLine("While loop count: " + whileLoopCount);
+            Console.WriteLine("\nWhile loop count: " + whileLoopCount + "\nSwaps made: " + swapCount + "\nSwaps Finalized: " + finalSwapCount);
 
             Console.WriteLine("\nFinal Assessment:");
             PrintIntList(intList);
@@ -377,7 +517,7 @@ namespace Traveling
             {
                 if (AreIntersecting(pointList[pointList.Count - 1], pointList[0], pointList[i], pointList[i + 1]))
                 {
-                    Console.WriteLine("p" + intList[pointList.Count - 1] + " --- p" + intList[0] + " intersects p" + intList[i] + " --- p" + intList[i + 1]);
+                    //Console.WriteLine("p" + intList[pointList.Count - 1] + " --- p" + intList[0] + " intersects p" + intList[i] + " --- p" + intList[i + 1]);
                     count++;
                 }
             }
