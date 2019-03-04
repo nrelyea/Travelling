@@ -35,8 +35,8 @@ namespace Traveling
             //List<int> indexList = OriginalOrder(pointList);
             //List<int> indexList = BruteForce(pointList);
             //List<int> indexList = ClosestPointNext(pointList);
-            List<int> indexList = SmallestFromSwaps(pointList);
-            //Console.WriteLine("Intersect = " + AreIntersecting(p0, p1, p2, p3));
+            //List<int> indexList = SmallestFromSwaps(pointList);
+            List<int> indexList = SmallestFromIntersectionCount(pointList);
 
             List<List<int>> intListList = BuildIntListList(pointList, indexList);
 
@@ -257,6 +257,81 @@ namespace Traveling
 
 
 
+        static List<int> SmallestFromIntersectionCount(List<Point> pointList)
+        {
+            List<int> intList = OriginalOrder(pointList);
+
+            List<Point> tempPointList = new List<Point> { };
+
+            for (int i = 0; i < pointList.Count; i++)
+            {
+                int x = pointList[i].x;
+                int y = pointList[i].y;
+                Point newPoint = new Point(0, 0);
+                newPoint.x = x;
+                newPoint.y = y;
+                tempPointList.Add(newPoint);
+            }
+
+            Console.WriteLine("Original:");
+            PrintPointList(tempPointList);
+
+            bool complete = false;
+
+            int minIntersections = IntersectionCount(tempPointList);
+
+            int whileLoopCount = 0;
+
+            while (!complete)
+            {
+                complete = true;
+
+                for (int i = 0; i < tempPointList.Count; i++)
+                {
+                    for (int j = 0; j < tempPointList.Count; j++)
+                    {
+                        if (i != j)
+                        {
+                            SwapPoints(tempPointList, i, j);
+                            SwapInts(intList, i, j);
+
+                            int newIntersectionCount = IntersectionCount(tempPointList);
+
+                            if (newIntersectionCount < minIntersections)
+                            {
+                                complete = false;
+
+                                minIntersections = newIntersectionCount;
+
+                                break;
+                            }
+                            else
+                            {
+                                SwapPoints(tempPointList, i, j);
+                                SwapInts(intList, i, j);
+                            }
+                        }
+                    }
+                }
+
+
+
+                whileLoopCount++;
+            }
+
+            Console.WriteLine("While loop count: " + whileLoopCount);
+
+            Console.WriteLine("\nFinal Assessment:");
+            PrintIntList(intList);
+            double minPath = PathLength(tempPointList);
+            Console.WriteLine("Path Length: " + Math.Round(minPath, 2));
+
+            EvaluateResult(minPath);
+
+            return intList;
+        }
+
+
         static void EvaluateResult(double resultDistance)
         {
             JObject bruteForceLengths = JObject.Parse(File.ReadAllText(@"c:../../brute_force_lengths.json"));
@@ -292,7 +367,7 @@ namespace Traveling
                 {
                     if (AreIntersecting(pointList[i], pointList[i + 1], pointList[j], pointList[j + 1]))
                     {
-                        Console.WriteLine("p" + intList[i] + " --- p" + intList[i + 1] + " intersects p" + intList[j] + " --- p" + intList[j + 1]);
+                        //Console.WriteLine("p" + intList[i] + " --- p" + intList[i + 1] + " intersects p" + intList[j] + " --- p" + intList[j + 1]);
                         count++;
                     }
                 }
